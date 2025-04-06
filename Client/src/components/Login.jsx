@@ -16,6 +16,16 @@ const Login = () => {
         password
       })
       console.log(data)
+
+
+      if(data.token){
+        localStorage.setItem('token',data.token)//store the token in local storage
+        localStorage.setItem('user',JSON.stringify(data.user))//The localStorage stores key-value pairs as strings only.
+        setTimeout(()=>{
+          navigate('/')
+        },2000)
+      }
+
     }
     catch(err){
       console.log(err)
@@ -61,7 +71,7 @@ const Login = () => {
 
         <p className="text-center text-gray-600">
           Forgot your password?{' '}
-          <a href="/reset-password" className="text-blue-500 hover:underline">
+          <a href="/reset" className="text-blue-500 hover:underline">
             Reset Password
           </a>
         </p>

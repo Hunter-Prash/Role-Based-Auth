@@ -32,6 +32,8 @@ export const signUpController=async(req,res)=>{
     }
 }
 
+
+
 export const loginController=async(req,res)=>{
     try{
         const {email,password}=req.body
@@ -61,3 +63,35 @@ export const loginController=async(req,res)=>{
     }
 }
 
+export const resetPasswordController = async (req, res) => {
+    const { email, password, answer } = req.body;
+  
+    // Validate input fields
+    if (!email || !password || !answer) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+  
+    try {
+      // Find the user by email
+      const user = await userModel.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+  
+      // Check if the provided answer matches the stored answer
+      if (user.answer !== answer) {
+        return res.status(400).json({ message: 'Incorrect security answer.' });
+      }
+  
+      // Hash the new password
+      const newPassword = await bcrypt.hash(password, 10);
+  
+      // Update the user's password
+      await userModel.findByIdAndUpdate(user._id, { password: newPassword });
+  
+      res.status(200).json({ message: 'Password updated successfully.' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error.' });
+    }
+  };
